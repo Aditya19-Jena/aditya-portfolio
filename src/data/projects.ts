@@ -4,7 +4,7 @@ export const projects = [
     title: "CineVerse",
     subtitle: "An AI-powered movie discovery platform that combines personalized recommendations, mood-based suggestions, and real-time movie data.",
     description: "Full-Stack · AI · API Integration",
-    image: "/public/images/projects/cover.png",
+    image: "/images/projects/cover.png",
 
     accent: "violet",
 
