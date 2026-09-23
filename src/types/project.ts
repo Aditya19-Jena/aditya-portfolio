@@ -10,8 +10,11 @@ export type ProjectFeature = {
 };
 
 export type Architecture = {
-  title: string;
-  description: string;
+  frontend: string[];
+  backend: string[];
+  database: string[];
+  infrastructure: string[];
+  ai: string[];
 };
 
 export type TechnicalDeepDive = {

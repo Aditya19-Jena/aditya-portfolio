@@ -67,7 +67,9 @@ const accentStyles = {
    MOTION
 ================================================================ */
 
-const fadeUp = {
+import type { Variants } from "framer-motion";
+
+const fadeUp: Variants = {
   hidden: {
     opacity: 0,
     y: 18,
@@ -849,8 +851,6 @@ const ProjectDetails = ({
   selectedIndex,
   activeGallery,
   setActiveGallery,
-  activeTechGroup,
-  setActiveTechGroup,
   activeBuildStory,
   setActiveBuildStory,
   accent,
