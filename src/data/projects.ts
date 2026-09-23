@@ -1,4 +1,6 @@
-export const projects = [
+import type { Project } from "../types/project";
+
+export const projects: Project[] = [
   {
     number: "01",
     title: "CineVerse",
@@ -34,25 +36,25 @@ export const projects = [
 
     gallery: [
       {
-        image: "/public/images/projects/home.png",
+        image: "/images/projects/home.png",
         title: "AI-Powered Movie Discovery",
         description:
           "The CineVerse experience combines movie discovery with personalized recommendations and intelligent viewing suggestions.",
       },
       {
-        image: "/public/images/projects/search.png",
+        image: "/images/projects/search.png",
         title: "Search & Discover",
         description:
           "The search interface allows users to find movies dynamically and explore relevant results.",
       },
       {
-        image: "/public/images/projects/movie-details.png",
+        image: "/images/projects/movie-details.png",
         title: "Movie Details",
         description:
           "A dedicated movie view provides detailed information and helps users explore individual titles more deeply.",
       },
       {
-        image: "/public/images/projects/watchlist.png",
+        image: "/images/projects/watchlist.png",
         title: "Movie Watchlist",
         description:
           "Users can save movies they want to revisit, creating a personalized collection of titles.",

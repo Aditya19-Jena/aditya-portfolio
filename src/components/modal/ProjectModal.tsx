@@ -7,7 +7,6 @@ import {
   ArrowUpRight,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   ExternalLink,
   X,
 } from "lucide-react";
@@ -17,41 +16,6 @@ import {
   motion,
   useReducedMotion,
 } from "framer-motion";
-
-type GalleryItem = {
-  image: string;
-  title: string;
-  description: string;
-};
-
-type ProjectFeature = {
-  title: string;
-  description: string;
-};
-
-type ProjectChallenge = {
-  title: string;
-  description: string;
-};
-
-type TechnicalDeepDive = {
-  title: string;
-  description: string;
-};
-
-type BuildStoryItem = {
-  number: string;
-  title: string;
-  description: string;
-};
-
-type Architecture = {
-  frontend: string[];
-  backend: string[];
-  ai: string[];
-  database: string[];
-  infrastructure?: string[];
-};
 
 
 
@@ -114,7 +78,7 @@ const fadeUp = {
     y: 0,
     transition: {
       duration: 0.55,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as const,
     },
   },
 };
@@ -253,7 +217,7 @@ const ProjectModal = ({
           }
           transition={{
             duration: 0.4,
-            ease: [0.22, 1, 0.36, 1],
+            ease: [0.22, 1, 0.36, 1] as const,
           }}
           onClick={(event) => event.stopPropagation()}
           className="relative
@@ -398,7 +362,7 @@ const AllProjects = ({
                 transition={{
                   delay: index * 0.06,
                   duration: 0.45,
-                  ease: [0.22, 1, 0.36, 1],
+                  ease: [0.22, 1, 0.36, 1] as const,
                 }}
                 className={`
                   group relative w-full
@@ -785,7 +749,7 @@ const SystemFlow = ({
             transition={{
               duration: 0.65,
               delay: index * 0.04,
-              ease: [0.22, 1, 0.36, 1],
+              ease: [0.22, 1, 0.36, 1] as const,
             }}
             className="group"
           >
@@ -1882,78 +1846,7 @@ const StoryCard = ({
   );
 };
 
-const TechAccordion = ({
-  title,
-  items,
-  accent,
-  isOpen,
-  onToggle,
-}: {
-  title: string;
-  items: string[];
-  accent: (typeof accentStyles)[keyof typeof accentStyles];
-  isOpen: boolean;
-  onToggle: () => void;
-}) => {
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={onToggle}
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition hover:bg-white/[0.025] md:px-6"
-      >
-        <div className="flex items-center gap-3">
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${
-              isOpen ? accent.line : "bg-zinc-700"
-            }`}
-          />
 
-          <span
-            className={`text-[10px] font-medium uppercase tracking-[0.16em] ${
-              isOpen ? accent.text : "text-zinc-500"
-            }`}
-          >
-            {title}
-          </span>
-        </div>
-
-        <ChevronDown
-          size={14}
-          className={`text-zinc-600 transition duration-300 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        />
-      </button>
-
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="overflow-hidden"
-          >
-            <div className="flex flex-wrap gap-2 px-5 pb-5 pt-1 md:px-6">
-              {items.map((item) => (
-                <motion.span
-                  key={item}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  whileHover={{ y: -2 }}
-                  className={`rounded-lg border ${accent.border} bg-white/[0.025] px-3 py-2 text-[9px] text-zinc-400 transition hover:text-zinc-200`}
-                >
-                  {item}
-                </motion.span>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
 
 const ProjectLink = ({
   href,

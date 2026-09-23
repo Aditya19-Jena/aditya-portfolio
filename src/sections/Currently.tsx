@@ -166,7 +166,7 @@ const Currently = () => {
       </div>
 
       {/* SLIDE ANIMATION */}
-      <style jsx>{`
+      <style>{`
         @keyframes slideIn {
           from {
             opacity: 0;
