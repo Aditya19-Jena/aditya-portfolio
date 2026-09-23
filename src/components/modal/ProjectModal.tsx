@@ -79,7 +79,7 @@ type Project = {
       label: string;
       title: string;
       description: string;
-      detail?: string;
+      detail: string;
     }[];
   };
 
