@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -14,7 +14,6 @@ import {
   motion,
   useReducedMotion,
 } from "framer-motion";
-import { h5 } from "framer-motion/m";
 
 type GalleryItem = {
   image: string;

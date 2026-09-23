@@ -1,344 +1,327 @@
 import { useEffect, useRef, useState } from "react";
+import type { ElementType } from "react";
 import {
   House,
   UserRound,
+  FolderOpen,
   Layers3,
   Route,
   Activity,
-  FolderOpen,
+  BadgeCheck,
   GraduationCap,
   Mail,
 } from "lucide-react";
+
+type NavItem = {
+  id: string;
+  href: string;
+  label: string;
+  icon: ElementType;
+};
+
+const navItems: NavItem[] = [
+  {
+    id: "home",
+    href: "#home",
+    label: "Home",
+    icon: House,
+  },
+  {
+    id: "about",
+    href: "#about",
+    label: "About",
+    icon: UserRound,
+  },
+  {
+    id: "projects",
+    href: "#projects",
+    label: "Projects",
+    icon: FolderOpen,
+  },
+  {
+    id: "capabilities",
+    href: "#capabilities",
+    label: "Capabilities",
+    icon: Layers3,
+  },
+  {
+    id: "journey",
+    href: "#journey",
+    label: "Journey",
+    icon: Route,
+  },
+  {
+    id: "currently",
+    href: "#currently",
+    label: "Currently",
+    icon: Activity,
+  },
+  {
+    id: "certifications",
+    href: "#certifications",
+    label: "Certificates",
+    icon: BadgeCheck,
+  },
+  {
+    id: "education",
+    href: "#education",
+    label: "Education",
+    icon: GraduationCap,
+  },
+  {
+    id: "contact",
+    href: "#contact",
+    label: "Contact",
+    icon: Mail,
+  },
+];
 
 const BottomDock = () => {
   const [activeSection, setActiveSection] = useState("home");
   const [isVisible, setIsVisible] = useState(true);
 
+  // Prevent the scroll listener from immediately
+  // overriding the section selected by a click.
   const isNavigating = useRef(false);
-  const navigationTimeout = useRef(null);
 
-  const navItems = [
-    {
-      id: "home",
-      href: "#home",
-      icon: House,
-      label: "Home",
-    },
-    {
-      id: "about",
-      href: "#about",
-      icon: UserRound,
-      label: "About",
-    },
-    {
-      id: "capabilities",
-      href: "#capabilities",
-      icon: Layers3,
-      label: "Capabilities",
-    },
-    {
-      id: "journey",
-      href: "#journey",
-      icon: Route,
-      label: "Journey",
-    },
-    {
-      id: "currently",
-      href: "#currently",
-      icon: Activity,
-      label: "Currently",
-    },
-    {
-      id: "projects",
-      href: "#projects",
-      icon: FolderOpen,
-      label: "Projects",
-    },
-    {
-      id: "education",
-      href: "#education",
-      icon: GraduationCap,
-      label: "Education",
-    },
-    {
-      id: "contact",
-      href: "#contact",
-      icon: Mail,
-      label: "Contact",
-    },
-  ];
-
-  /* --------------------------------
-     ACTIVE SECTION + FOOTER
-  -------------------------------- */
+  // -----------------------------------------
+  // ACTIVE SECTION
+  // -----------------------------------------
 
   useEffect(() => {
     const handleScroll = () => {
-      /* --------------------------------
-         FOOTER VISIBILITY
-      -------------------------------- */
-
-      const footer =
-        document.querySelector("footer") ||
-        document.querySelector("#footer");
-
-      if (footer) {
-        const footerRect =
-          footer.getBoundingClientRect();
-
-        setIsVisible(
-          footerRect.top >= window.innerHeight
-        );
+      if (isNavigating.current) {
+        return;
       }
 
-      /* --------------------------------
-         ACTIVE SECTION
-      -------------------------------- */
-
-      // Don't change active section while
-      // smooth navigation is happening.
-      if (isNavigating.current) return;
-
-      const focusPoint = window.innerHeight * 0.35;
+      const scrollPosition = window.scrollY + 180;
 
       let currentSection = "home";
 
-      for (const item of navItems) {
-        const section = document.querySelector(
-          item.href
-        );
+      navItems.forEach((item) => {
+        const section = document.querySelector(item.href);
 
-        if (!section) continue;
+        if (!section) {
+          return;
+        }
 
-        const rect =
-          section.getBoundingClientRect();
+        const sectionTop =
+          (section as HTMLElement).offsetTop;
 
-        if (rect.top <= focusPoint) {
+        if (scrollPosition >= sectionTop) {
           currentSection = item.id;
         }
-      }
+      });
 
       setActiveSection(currentSection);
     };
+
+    handleScroll();
 
     window.addEventListener("scroll", handleScroll, {
       passive: true,
     });
 
-    handleScroll();
-
     return () => {
-      window.removeEventListener(
-        "scroll",
-        handleScroll
-      );
-
-      if (navigationTimeout.current) {
-        clearTimeout(navigationTimeout.current);
-      }
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  /* --------------------------------
-     NAVIGATION
-  -------------------------------- */
+  // -----------------------------------------
+  // FOOTER VISIBILITY
+  // -----------------------------------------
 
-  const handleNavigation = (href, id) => {
-    const section = document.querySelector(href);
+  useEffect(() => {
+    const footer =
+      document.querySelector("#footer") ??
+      document.querySelector("footer");
 
-    if (!section) return;
-
-    // Immediately show the selected section
-    setActiveSection(id);
-
-    // Lock scroll-based active detection
-    isNavigating.current = true;
-
-    // Clear previous unlock timer
-    if (navigationTimeout.current) {
-      clearTimeout(navigationTimeout.current);
+    if (!footer) {
+      return;
     }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(!entry.isIntersecting);
+      },
+      {
+        threshold: 0.05,
+      }
+    );
+
+    observer.observe(footer);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // -----------------------------------------
+  // NAVIGATION
+  // -----------------------------------------
+
+  const handleNavigation = (item: NavItem) => {
+    const section = document.querySelector(item.href);
+
+    if (!section) {
+      return;
+    }
+
+    // Immediately show the clicked section
+    setActiveSection(item.id);
+
+    // Lock automatic section detection while
+    // smooth scrolling is happening.
+    isNavigating.current = true;
 
     section.scrollIntoView({
       behavior: "smooth",
       block: "start",
     });
 
-    /*
-      Give smooth scrolling enough time to finish.
-      This prevents the indicator from jumping
-      through intermediate sections.
-    */
-    navigationTimeout.current = setTimeout(() => {
+    // Unlock after the smooth scroll has finished.
+    window.setTimeout(() => {
       isNavigating.current = false;
-
-      // Recalculate the actual section once scrolling ends
-      const focusPoint = window.innerHeight * 0.35;
-
-      let currentSection = id;
-
-      for (const item of navItems) {
-        const target = document.querySelector(
-          item.href
-        );
-
-        if (!target) continue;
-
-        const rect =
-          target.getBoundingClientRect();
-
-        if (rect.top <= focusPoint) {
-          currentSection = item.id;
-        }
-      }
-
-      setActiveSection(currentSection);
-    }, 900);
+      setActiveSection(item.id);
+    }, 800);
   };
 
-  const activeIndex = Math.max(
-    0,
-    navItems.findIndex(
-      (item) => item.id === activeSection
-    )
-  );
+  // -----------------------------------------
+  // HOME
+  // -----------------------------------------
+
+  const handleHome = () => {
+    const homeSection = document.querySelector("#home");
+
+    if (!homeSection) {
+      return;
+    }
+
+    setActiveSection("home");
+
+    isNavigating.current = true;
+
+    homeSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    window.setTimeout(() => {
+      isNavigating.current = false;
+      setActiveSection("home");
+    }, 800);
+  };
+
+  // -----------------------------------------
+  // RENDER
+  // -----------------------------------------
 
   return (
     <nav
       aria-label="Portfolio navigation"
       className={`
         fixed
-        bottom-5
+        bottom-4
         left-1/2
         z-50
         -translate-x-1/2
         transition-all
-        duration-500
-        ease-[cubic-bezier(0.22,1,0.36,1)]
+        duration-300
+        ease-out
         ${
           isVisible
             ? "translate-y-0 opacity-100"
-            : "pointer-events-none translate-y-8 opacity-0"
+            : "pointer-events-none translate-y-5 opacity-0"
         }
       `}
     >
-      {/* DOCK */}
-
       <div
         className="
           flex
           items-center
           rounded-full
           border
-          border-zinc-800/90
-          bg-[#111112]/95
-          p-1.5
-          shadow-[0_12px_40px_rgba(0,0,0,0.45)]
-          backdrop-blur-2xl
+          border-zinc-800
+          bg-[#111111]/95
+          px-1
+          py-1
+          shadow-[0_8px_30px_rgba(0,0,0,0.35)]
+          backdrop-blur-xl
         "
       >
+        {/* -------------------------------- */}
         {/* BRAND */}
+        {/* -------------------------------- */}
 
         <button
-          onClick={() =>
-            handleNavigation("#home", "home")
-          }
+          type="button"
+          onClick={handleHome}
           aria-label="Go to home"
           className="
             flex
-            h-8
+            h-7
             items-center
-            px-3
-            text-[12px]
+            px-2.5
+            text-[10px]
             font-semibold
-            tracking-[0.08em]
-            text-zinc-300
+            tracking-[0.12em]
+            text-zinc-400
             transition-colors
-            duration-300
+            duration-200
             hover:text-white
           "
         >
           ADITYA
         </button>
 
+        {/* -------------------------------- */}
         {/* DIVIDER */}
+        {/* -------------------------------- */}
 
-        <div className="mx-1 h-4 w-px bg-zinc-800" />
+        <div className="mx-1 h-3 w-px bg-zinc-800" />
 
+        {/* -------------------------------- */}
         {/* NAVIGATION */}
+        {/* -------------------------------- */}
 
-        <div className="relative">
-          {/* ACTIVE INDICATOR */}
+        <div className="flex items-center">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeSection === item.id;
 
-          <div
-            className="
-              pointer-events-none
-              absolute
-              left-0
-              top-0
-              h-8
-              w-8
-              rounded-full
-              bg-zinc-100
-              shadow-[0_2px_12px_rgba(255,255,255,0.14)]
-              transition-transform
-              duration-300
-              ease-[cubic-bezier(0.22,1,0.36,1)]
-            "
-            style={{
-              transform: `translateX(${activeIndex * 2}rem)`,
-            }}
-          />
-
-          {/* ICONS */}
-
-          <div className="flex items-center">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-
-              const isActive =
-                activeSection === item.id;
-
-              return (
-                <button
-                  key={item.id}
-                  onClick={() =>
-                    handleNavigation(
-                      item.href,
-                      item.id
-                    )
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleNavigation(item)}
+                aria-label={item.label}
+                aria-current={
+                  isActive ? "page" : undefined
+                }
+                title={item.label}
+                className={`
+                  flex
+                  h-7
+                  w-7
+                  items-center
+                  justify-center
+                  rounded-full
+                  transition-all
+                  duration-200
+                  ${
+                    isActive
+                      ? "bg-zinc-100 text-zinc-900"
+                      : "text-zinc-600 hover:bg-zinc-800/70 hover:text-zinc-300"
                   }
-                  aria-label={item.label}
-                  title={item.label}
-                  className={`
-                    relative
-                    z-10
-                    flex
-                    h-8
-                    w-8
-                    shrink-0
-                    items-center
-                    justify-center
-                    rounded-full
-                    transition-colors
-                    duration-300
-                    ${
-                      isActive
-                        ? "text-zinc-900"
-                        : "text-zinc-600 hover:text-zinc-300"
-                    }
-                  `}
-                >
-                  <Icon
-                    size={13}
-                    strokeWidth={
-                      isActive ? 2.1 : 1.5
-                    }
-                  />
-                </button>
-              );
-            })}
-          </div>
+                `}
+              >
+                <Icon
+                  size={12}
+                  strokeWidth={isActive ? 2 : 1.5}
+                />
+              </button>
+            );
+          })}
         </div>
       </div>
     </nav>

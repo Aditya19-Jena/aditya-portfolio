@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { projects } from "../data/projects";
 import ProjectModal from "../components/modal/ProjectModal";
+import type { Project } from "../types/project";
 
 const Projects = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [selectedProject, setSelectedProject] = useState<
-    (typeof projects)[number] | null
-  >(null);
+  const [selectedProject, setSelectedProject] =
+    useState<Project | null>(null);
 
   const openAllProjects = () => {
     setSelectedProject(null);
     setIsModalOpen(true);
   };
 
-  const openProject = (project: (typeof projects)[number]) => {
+  const openProject = (project: Project) => {
     setSelectedProject(project);
     setIsModalOpen(true);
   };
